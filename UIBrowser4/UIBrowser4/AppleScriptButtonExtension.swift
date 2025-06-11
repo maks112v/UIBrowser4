@@ -13,6 +13,23 @@ import Cocoa
  */
 extension MasterSplitItemViewController {
     
+    // MARK: - PRIVATE METHODS
+    
+    /**
+     Returns the full AppleScript description of the currently selected element.
+     
+     - returns: The full AppleScript description as an NSAttributedString, or nil if no element is selected.
+     */
+    private func currentElementAppleScriptDescription() -> NSAttributedString? {
+        // Get the current element from the data model
+        guard let currentElement = ElementDataModel.sharedInstance.currentElement else {
+            return nil
+        }
+        
+        // Get the full AppleScript description
+        return ElementDataModel.sharedInstance.fullAppleScriptDescription(ofElement: currentElement)
+    }
+    
     // MARK: - ACTION METHODS
     
     /**
@@ -25,9 +42,17 @@ extension MasterSplitItemViewController {
     @IBAction func generateAppleScript(_ sender: NSButton) {
         // Action method connected from the Generate AppleScript pop-up button to First Responder in Main.storyboard.
         
-        // TODO: Implement this based on UI Browser 2. The action method actually has to do with the selected pop-up menu item.
-        // Open the Generate AppleScript pop-up button.
-        print("The Generate AppleScript button's action method is not yet written.")
+        // Get the AppleScript description of the currently selected element
+        guard let appleScriptDescription = currentElementAppleScriptDescription() else {
+            // No element is currently selected
+            NSBeep()
+            return
+        }
+        
+        // Copy the AppleScript description to the clipboard
+        let pasteboard = NSPasteboard.general
+        pasteboard.clearContents()
+        pasteboard.setString(appleScriptDescription.string, forType: .string)
     }
     
 }
